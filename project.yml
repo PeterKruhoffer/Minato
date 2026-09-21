@@ -1,0 +1,48 @@
+name: Minato
+options:
+  bundleIdPrefix: com.minato
+  deploymentTarget:
+    macOS: '14.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    MACOSX_DEPLOYMENT_TARGET: '14.0'
+    CODE_SIGN_IDENTITY: 'Apple Development'
+    DEVELOPMENT_TEAM: 94985YFAN4
+    CODE_SIGN_STYLE: Manual
+    ENABLE_HARDENED_RUNTIME: YES
+targets:
+  Minato:
+    type: application
+    platform: macOS
+    sources:
+      - Minato/Sources
+      - Minato/Resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.minato.desktop
+        INFOPLIST_FILE: Minato/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_DEBUG_DYLIB: NO
+        COMBINE_HIDPI_IMAGES: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      - sdk: AppKit.framework
+      - sdk: ScreenCaptureKit.framework
+      - sdk: Carbon.framework
+  MinatoTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources: [MinatoTests]
+    dependencies:
+      - target: Minato
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  Minato:
+    build:
+      targets:
+        Minato: all
+    test:
+      targets: [MinatoTests]

@@ -1,0 +1,39 @@
+# macOS filesystem metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100/
+.Trashes/
+
+# Xcode and Swift build output
+build/
+.build/
+DerivedData/
+
+# Per-user Xcode state (keep the project and shared schemes)
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+*.moved-aside
+
+# Archives, test results, and packaged applications
+*.app/
+*.xcarchive/
+*.xcresult/
+*.dSYM/
+*.dSYM.zip
+*.ipa
+*.dmg
+*.pkg
+
+# Local signing material and configuration
+*.p12
+*.pfx
+*.mobileprovision
+*.provisionprofile
+*.local.xcconfig
+.env
+.env.*
+!.env.example

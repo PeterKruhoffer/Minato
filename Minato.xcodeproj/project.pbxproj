@@ -1,0 +1,495 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		02098C7EDCC011E0EA5EEB17 /* EditorController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A23A613E32E53C9ABB10292 /* EditorController.swift */; };
+		0FBF717A1CC59D473B132CD0 /* AnnotationRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A55EBB5CF5EECC8C1B441DE /* AnnotationRenderer.swift */; };
+		143FCC192623A3012586386D /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47912E7799EDD9125E04AAF2 /* WorkspaceView.swift */; };
+		1972E944574BB6A67DF333FE /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E217C64D187303D856D31915 /* CanvasView.swift */; };
+		5B0D75705689F36570533AB2 /* ScreenCaptureKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BB6DE9A6F4D8E2C0E7F53FA /* ScreenCaptureKit.framework */; };
+		6BDA710FBC08250F345899C9 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002D356BFE1A0CB68B9E1496 /* Theme.swift */; };
+		752A8B491D45B1B23C6AE5DB /* SampleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C7FAE585DED8252068BED2 /* SampleImage.swift */; };
+		76A01566EBFD598856ED17F8 /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35656F4FE90CC527A83BAB0 /* ShortcutManager.swift */; };
+		995B85850B5CF0840D9C1EA4 /* MinatoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93536631E167C529D8B8C87 /* MinatoTests.swift */; };
+		A2A61E1C64F5A01C429B3958 /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C65E3DF858BD73019AE30D4 /* Entry.swift */; };
+		B9EDEBE8C6F2AA47D6A10EA2 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8415EA95BE98CBF49C3EFE /* Models.swift */; };
+		CACDCB3E69719A8510F95C6B /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61ED9B255ED5F382FC3AEE46 /* Carbon.framework */; };
+		CCE4EEC596185C8DE8FD571B /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2FB0375640F3433CA14F283D /* AppKit.framework */; };
+		E806E9EDD4EF6814B4A6E06C /* ScreenCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87AD3D52DB77693CA58C1CA7 /* ScreenCapture.swift */; };
+		F6D0DC4DC1FA093AC9E5C194 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 855008AB3D2ADCA2C4F27DCA /* Assets.xcassets */; };
+		F8E0DA9190F26881F53E355E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9013F6A13DCDC4042F6660 /* AppDelegate.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CEDEED859DE65864D91CF47D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CBF232B04C31D158FECEE14 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7616B06ABEEE02B6AD7EF145;
+			remoteInfo = Minato;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		002D356BFE1A0CB68B9E1496 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		10C7FAE585DED8252068BED2 /* SampleImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleImage.swift; sourceTree = "<group>"; };
+		1A23A613E32E53C9ABB10292 /* EditorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorController.swift; sourceTree = "<group>"; };
+		2BB6DE9A6F4D8E2C0E7F53FA /* ScreenCaptureKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScreenCaptureKit.framework; path = System/Library/Frameworks/ScreenCaptureKit.framework; sourceTree = SDKROOT; };
+		2FB0375640F3433CA14F283D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		47912E7799EDD9125E04AAF2 /* WorkspaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkspaceView.swift; sourceTree = "<group>"; };
+		4C65E3DF858BD73019AE30D4 /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
+		61ED9B255ED5F382FC3AEE46 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		63BD0C517A316D3A59209B79 /* Minato.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Minato.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A55EBB5CF5EECC8C1B441DE /* AnnotationRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnnotationRenderer.swift; sourceTree = "<group>"; };
+		7D9013F6A13DCDC4042F6660 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		855008AB3D2ADCA2C4F27DCA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		87AD3D52DB77693CA58C1CA7 /* ScreenCapture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapture.swift; sourceTree = "<group>"; };
+		AF0E73CA67341664BD7BE535 /* MinatoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MinatoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AF8415EA95BE98CBF49C3EFE /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		E217C64D187303D856D31915 /* CanvasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CanvasView.swift; sourceTree = "<group>"; };
+		E35656F4FE90CC527A83BAB0 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
+		E93536631E167C529D8B8C87 /* MinatoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinatoTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		420249B39955E9F2E7E5FB82 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CCE4EEC596185C8DE8FD571B /* AppKit.framework in Frameworks */,
+				5B0D75705689F36570533AB2 /* ScreenCaptureKit.framework in Frameworks */,
+				CACDCB3E69719A8510F95C6B /* Carbon.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		13BED9FECF7D4E4EC6B0B4A2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				63BD0C517A316D3A59209B79 /* Minato.app */,
+				AF0E73CA67341664BD7BE535 /* MinatoTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		373F902B41C535D6D59BE3B0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				855008AB3D2ADCA2C4F27DCA /* Assets.xcassets */,
+			);
+			name = Resources;
+			path = Minato/Resources;
+			sourceTree = "<group>";
+		};
+		6F5191A5585A193CA21EC010 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2FB0375640F3433CA14F283D /* AppKit.framework */,
+				61ED9B255ED5F382FC3AEE46 /* Carbon.framework */,
+				2BB6DE9A6F4D8E2C0E7F53FA /* ScreenCaptureKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7C050B8BBF59FE65D29B1887 = {
+			isa = PBXGroup;
+			children = (
+				C071E71D6DA01E0C75903BA5 /* MinatoTests */,
+				373F902B41C535D6D59BE3B0 /* Resources */,
+				F1A0B076B1652DCFE94301FD /* Sources */,
+				6F5191A5585A193CA21EC010 /* Frameworks */,
+				13BED9FECF7D4E4EC6B0B4A2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C071E71D6DA01E0C75903BA5 /* MinatoTests */ = {
+			isa = PBXGroup;
+			children = (
+				E93536631E167C529D8B8C87 /* MinatoTests.swift */,
+			);
+			path = MinatoTests;
+			sourceTree = "<group>";
+		};
+		F1A0B076B1652DCFE94301FD /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				6A55EBB5CF5EECC8C1B441DE /* AnnotationRenderer.swift */,
+				7D9013F6A13DCDC4042F6660 /* AppDelegate.swift */,
+				E217C64D187303D856D31915 /* CanvasView.swift */,
+				1A23A613E32E53C9ABB10292 /* EditorController.swift */,
+				4C65E3DF858BD73019AE30D4 /* Entry.swift */,
+				AF8415EA95BE98CBF49C3EFE /* Models.swift */,
+				10C7FAE585DED8252068BED2 /* SampleImage.swift */,
+				87AD3D52DB77693CA58C1CA7 /* ScreenCapture.swift */,
+				E35656F4FE90CC527A83BAB0 /* ShortcutManager.swift */,
+				002D356BFE1A0CB68B9E1496 /* Theme.swift */,
+				47912E7799EDD9125E04AAF2 /* WorkspaceView.swift */,
+			);
+			name = Sources;
+			path = Minato/Sources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1E6F6421E2083878C40AF0ED /* MinatoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D59B651EA91C588CA183E92B /* Build configuration list for PBXNativeTarget "MinatoTests" */;
+			buildPhases = (
+				E5B745820E646B1C564BB5CC /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6B520417C756C3EC66165E4D /* PBXTargetDependency */,
+			);
+			name = MinatoTests;
+			packageProductDependencies = (
+			);
+			productName = MinatoTests;
+			productReference = AF0E73CA67341664BD7BE535 /* MinatoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		7616B06ABEEE02B6AD7EF145 /* Minato */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B9EA608BE4943324B6914A84 /* Build configuration list for PBXNativeTarget "Minato" */;
+			buildPhases = (
+				80B33086EB82E6BB1DB17DBA /* Sources */,
+				6F25BB746DD5554C6CD67B06 /* Resources */,
+				420249B39955E9F2E7E5FB82 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Minato;
+			packageProductDependencies = (
+			);
+			productName = Minato;
+			productReference = 63BD0C517A316D3A59209B79 /* Minato.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1CBF232B04C31D158FECEE14 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					1E6F6421E2083878C40AF0ED = {
+						DevelopmentTeam = 94985YFAN4;
+						ProvisioningStyle = Manual;
+					};
+					7616B06ABEEE02B6AD7EF145 = {
+						DevelopmentTeam = 94985YFAN4;
+						ProvisioningStyle = Manual;
+					};
+				};
+			};
+			buildConfigurationList = 6E315AAF66EB912482AAB973 /* Build configuration list for PBXProject "Minato" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 7C050B8BBF59FE65D29B1887;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 13BED9FECF7D4E4EC6B0B4A2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7616B06ABEEE02B6AD7EF145 /* Minato */,
+				1E6F6421E2083878C40AF0ED /* MinatoTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6F25BB746DD5554C6CD67B06 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6D0DC4DC1FA093AC9E5C194 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		80B33086EB82E6BB1DB17DBA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0FBF717A1CC59D473B132CD0 /* AnnotationRenderer.swift in Sources */,
+				F8E0DA9190F26881F53E355E /* AppDelegate.swift in Sources */,
+				1972E944574BB6A67DF333FE /* CanvasView.swift in Sources */,
+				02098C7EDCC011E0EA5EEB17 /* EditorController.swift in Sources */,
+				A2A61E1C64F5A01C429B3958 /* Entry.swift in Sources */,
+				B9EDEBE8C6F2AA47D6A10EA2 /* Models.swift in Sources */,
+				752A8B491D45B1B23C6AE5DB /* SampleImage.swift in Sources */,
+				E806E9EDD4EF6814B4A6E06C /* ScreenCapture.swift in Sources */,
+				76A01566EBFD598856ED17F8 /* ShortcutManager.swift in Sources */,
+				6BDA710FBC08250F345899C9 /* Theme.swift in Sources */,
+				143FCC192623A3012586386D /* WorkspaceView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E5B745820E646B1C564BB5CC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				995B85850B5CF0840D9C1EA4 /* MinatoTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6B520417C756C3EC66165E4D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7616B06ABEEE02B6AD7EF145 /* Minato */;
+			targetProxy = CEDEED859DE65864D91CF47D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2EA3362F858ABCC0CC9AA20C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_DEBUG_DYLIB = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Minato/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.minato.desktop;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3FD4328BB854C4F48C7780B1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.minato.MinatoTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Minato.app/Contents/MacOS/Minato";
+			};
+			name = Debug;
+		};
+		620DBFF71DB00B38310C6EB4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_DEBUG_DYLIB = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Minato/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.minato.desktop;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		C7D8518167C50BB118C32139 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 94985YFAN4;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D43D6C18BEFD9EEE1E7E558B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 94985YFAN4;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		EAA8822EC86E6771271DFD99 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.minato.MinatoTests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Minato.app/Contents/MacOS/Minato";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6E315AAF66EB912482AAB973 /* Build configuration list for PBXProject "Minato" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C7D8518167C50BB118C32139 /* Debug */,
+				D43D6C18BEFD9EEE1E7E558B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B9EA608BE4943324B6914A84 /* Build configuration list for PBXNativeTarget "Minato" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2EA3362F858ABCC0CC9AA20C /* Debug */,
+				620DBFF71DB00B38310C6EB4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D59B651EA91C588CA183E92B /* Build configuration list for PBXNativeTarget "MinatoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3FD4328BB854C4F48C7780B1 /* Debug */,
+				EAA8822EC86E6771271DFD99 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1CBF232B04C31D158FECEE14 /* Project object */;
+}
