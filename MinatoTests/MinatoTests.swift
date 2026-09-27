@@ -145,6 +145,110 @@ final class MinatoTests: XCTestCase {
     }
 
     @MainActor
+    func testKeyboardMovementClampsToImageAndCanBeUndone() {
+        let canvas = CanvasView(frame: CGRect(x: 0, y: 0, width: 400, height: 300))
+        let document = CaptureDocument(image: image(), title: "Keyboard movement")
+        let arrow = Annotation(kind: .arrow, points: [CGPoint(x: 10, y: 20), CGPoint(x: 50, y: 40)], color: .blue)
+        document.replaceAnnotations([arrow])
+        canvas.document = document
+        canvas.selectedID = arrow.id
+        canvas.keyDown(with: NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [.shift], timestamp: 0, windowNumber: 0, context: nil, characters: "", charactersIgnoringModifiers: "", isARepeat: false, keyCode: 124)!)
+        XCTAssertEqual(document.annotations[0].points[0], CGPoint(x: 20, y: 20))
+        XCTAssertEqual(document.annotations[0].color, .blue)
+        document.undo()
+        XCTAssertEqual(document.annotations, [arrow])
+        canvas.moveSelection(by: CGPoint(x: -200, y: 200))
+        XCTAssertEqual(document.annotations[0].points, [CGPoint(x: 0, y: 60), CGPoint(x: 40, y: 80)])
+        document.undo()
+        XCTAssertEqual(document.annotations, [arrow])
+    }
+
+    @MainActor
+    func testExportAndSampleAreIndependentOfInterfaceAppearance() throws {
+        let document = CaptureDocument(image: image(width: 400, height: 300), title: "Appearance")
+        document.replaceAnnotations([
+            Annotation(kind: .note, points: [CGPoint(x: 30, y: 120), CGPoint(x: 70, y: 30)], color: .violet, text: "Readable in every appearance"),
+            Annotation(kind: .arrow, points: [CGPoint(x: 20, y: 220), CGPoint(x: 240, y: 260)], color: .coral)
+        ])
+        var exports: [Data] = []
+        var samples: [Data] = []
+        for name in [NSAppearance.Name.aqua, .darkAqua, .accessibilityHighContrastDarkAqua] {
+            let appearance = try XCTUnwrap(NSAppearance(named: name))
+            var result: Result<(Data, Data), Error>!
+            appearance.performAsCurrentDrawingAppearance {
+                result = Result {
+                    let rendered = try AnnotationRenderer.render(document)
+                    let sample = try AnnotationRenderer.render(SampleImage.make())
+                    return (try XCTUnwrap(rendered.representation(using: .png, properties: [:])), try XCTUnwrap(sample.representation(using: .png, properties: [:])))
+                }
+            }
+            let (export, sample) = try result.get()
+            exports.append(export)
+            samples.append(sample)
+        }
+        XCTAssertEqual(exports[0], exports[1], "Dark Mode must not recolor exported notes or arrows")
+        XCTAssertEqual(exports[0], exports[2], "Interface contrast preferences must not recolor exported content")
+        XCTAssertEqual(samples[0], samples[1], "The sample screenshot must retain its original colors")
+        XCTAssertEqual(samples[0], samples[2])
+    }
+
+    @MainActor
+    func testActualPixelSizeSurvivesCanvasResize() {
+        let canvas = CanvasView(frame: CGRect(x: 0, y: 0, width: 300, height: 240))
+        canvas.document = CaptureDocument(image: image(width: 800, height: 600), title: "Zoom")
+        canvas.usesActualSize = true
+        let originalScale = canvas.imageScale
+        canvas.setFrameSize(CGSize(width: 700, height: 500))
+        XCTAssertEqual(canvas.imageScale, originalScale)
+        XCTAssertEqual(canvas.imageScale, 1)
+        canvas.usesActualSize = false
+        XCTAssertLessThan(canvas.imageScale, 1)
+        XCTAssertTrue(canvas.bounds.contains(canvas.imageRect))
+    }
+
+    @MainActor
+    func testWorkspaceReflowsWithHiddenPanes() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let editor = EditorController(captureStore: try CaptureStore(directory: directory), restoresWindow: false)
+        let window = try XCTUnwrap(editor.window)
+        let workspace = try XCTUnwrap(editor.workspace)
+        workspace.splitView.autosaveName = nil
+        defer { window.close() }
+        window.setContentSize(CGSize(width: 1200, height: 720))
+        workspace.view.layoutSubtreeIfNeeded()
+        let sidebar = workspace.sidebarItem.viewController.view
+        let originalSidebarWidth = sidebar.frame.width
+        workspace.splitView.setPosition(originalSidebarWidth + 30, ofDividerAt: 0)
+        workspace.view.layoutSubtreeIfNeeded()
+        XCTAssertGreaterThan(sidebar.frame.width, originalSidebarWidth + 20, "The sidebar divider must respond to resizing")
+        let inspector = workspace.inspectorItem.viewController.view
+        let originalInspectorWidth = inspector.frame.width
+        let targetInspectorWidth = originalInspectorWidth + (originalInspectorWidth > 270 ? -30 : 30)
+        workspace.splitView.setPosition(workspace.splitView.bounds.width - targetInspectorWidth - workspace.splitView.dividerThickness, ofDividerAt: 1)
+        workspace.view.layoutSubtreeIfNeeded()
+        if targetInspectorWidth > originalInspectorWidth {
+            XCTAssertGreaterThan(inspector.frame.width, originalInspectorWidth + 20)
+        } else {
+            XCTAssertLessThan(inspector.frame.width, originalInspectorWidth - 20)
+        }
+        let fullWidth = workspace.canvas.bounds.width
+        XCTAssertGreaterThan(fullWidth, 400)
+        workspace.sidebarItem.isCollapsed = true
+        workspace.inspectorItem.isCollapsed = true
+        workspace.view.layoutSubtreeIfNeeded()
+        XCTAssertGreaterThan(workspace.canvas.bounds.width, fullWidth + 300)
+        workspace.sidebarItem.isCollapsed = false
+        workspace.inspectorItem.isCollapsed = false
+        window.setContentSize(CGSize(width: 820, height: 510))
+        workspace.view.layoutSubtreeIfNeeded()
+        XCTAssertGreaterThanOrEqual(workspace.canvas.bounds.width, 360)
+        XCTAssertGreaterThan(workspace.canvas.bounds.height, 300)
+        XCTAssertFalse(workspace.canvas.mouseDownCanMoveWindow)
+        XCTAssertFalse(window.isMovableByWindowBackground)
+    }
+
+    @MainActor
     private func drawStroke(on canvas: CanvasView) {
         mouse(.leftMouseDown, on: canvas, at: CGPoint(x: 10, y: 20))
         mouse(.leftMouseDragged, on: canvas, at: CGPoint(x: 50, y: 40))

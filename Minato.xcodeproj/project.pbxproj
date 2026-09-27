@@ -11,6 +11,7 @@
 		0FBF717A1CC59D473B132CD0 /* AnnotationRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A55EBB5CF5EECC8C1B441DE /* AnnotationRenderer.swift */; };
 		143FCC192623A3012586386D /* WorkspaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47912E7799EDD9125E04AAF2 /* WorkspaceView.swift */; };
 		1972E944574BB6A67DF333FE /* CanvasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E217C64D187303D856D31915 /* CanvasView.swift */; };
+		3142797B59BAAA132BCB0C6F /* EditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1765AE7A6DE30D1831D71977 /* EditorToolbar.swift */; };
 		5B0D75705689F36570533AB2 /* ScreenCaptureKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BB6DE9A6F4D8E2C0E7F53FA /* ScreenCaptureKit.framework */; };
 		6BDA710FBC08250F345899C9 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002D356BFE1A0CB68B9E1496 /* Theme.swift */; };
 		752A8B491D45B1B23C6AE5DB /* SampleImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C7FAE585DED8252068BED2 /* SampleImage.swift */; };
@@ -38,6 +39,7 @@
 /* Begin PBXFileReference section */
 		002D356BFE1A0CB68B9E1496 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		10C7FAE585DED8252068BED2 /* SampleImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleImage.swift; sourceTree = "<group>"; };
+		1765AE7A6DE30D1831D71977 /* EditorToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorToolbar.swift; sourceTree = "<group>"; };
 		1A23A613E32E53C9ABB10292 /* EditorController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorController.swift; sourceTree = "<group>"; };
 		2BB6DE9A6F4D8E2C0E7F53FA /* ScreenCaptureKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScreenCaptureKit.framework; path = System/Library/Frameworks/ScreenCaptureKit.framework; sourceTree = SDKROOT; };
 		2FB0375640F3433CA14F283D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -124,6 +126,7 @@
 				7D9013F6A13DCDC4042F6660 /* AppDelegate.swift */,
 				E217C64D187303D856D31915 /* CanvasView.swift */,
 				1A23A613E32E53C9ABB10292 /* EditorController.swift */,
+				1765AE7A6DE30D1831D71977 /* EditorToolbar.swift */,
 				4C65E3DF858BD73019AE30D4 /* Entry.swift */,
 				AF8415EA95BE98CBF49C3EFE /* Models.swift */,
 				10C7FAE585DED8252068BED2 /* SampleImage.swift */,
@@ -235,6 +238,7 @@
 				F8E0DA9190F26881F53E355E /* AppDelegate.swift in Sources */,
 				1972E944574BB6A67DF333FE /* CanvasView.swift in Sources */,
 				02098C7EDCC011E0EA5EEB17 /* EditorController.swift in Sources */,
+				3142797B59BAAA132BCB0C6F /* EditorToolbar.swift in Sources */,
 				A2A61E1C64F5A01C429B3958 /* Entry.swift in Sources */,
 				B9EDEBE8C6F2AA47D6A10EA2 /* Models.swift in Sources */,
 				752A8B491D45B1B23C6AE5DB /* SampleImage.swift in Sources */,

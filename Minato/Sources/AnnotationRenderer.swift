@@ -59,7 +59,7 @@ enum AnnotationRenderer {
             annotation.color.nsColor.withAlphaComponent(0.7).setStroke()
             card.lineWidth = 1.5
             card.stroke()
-            Theme.drawText(annotation.text, in: rect.insetBy(dx: 14, dy: 12), size: 18, weight: .medium, color: Theme.ink)
+            Theme.drawText(annotation.text, in: rect.insetBy(dx: 14, dy: 12), size: 18, weight: .medium, color: Theme.imageInk)
         }
         if selected {
             let rect = boundingRect(annotation, imageSize: imageSize).insetBy(dx: -6, dy: -6)

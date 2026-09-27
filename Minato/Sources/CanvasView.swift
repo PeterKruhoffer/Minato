@@ -5,7 +5,7 @@ enum EditorTool: String, CaseIterable {
     var title: String { switch self { case .select: return "Select"; case .pen: return "Draw"; case .arrow: return "Arrow"; case .note: return "Note" } }
     var symbol: String { switch self { case .select: return "cursorarrow"; case .pen: return "pencil.tip"; case .arrow: return "arrow.up.right"; case .note: return "text.bubble" } }
     var hint: String { switch self {
-    case .select: return "Drag to move an annotation · Double-click a note to edit"
+    case .select: return "Drag or use arrow keys to move · Double-click a note to edit"
     case .pen: return "Draw freely on your capture · Hold ⇧ for a straight line"
     case .arrow: return "New arrows cycle colors · Choose a swatch to override · ⇧ snaps angles"
     case .note: return "Click anywhere to anchor a text note"
@@ -41,9 +41,10 @@ final class CanvasView: FlippedView {
     private var movedAnnotation: Annotation?
     private var pan: CGPoint = .zero
     var zoom: CGFloat = 1 { didSet { pan = .zero; needsDisplay = true } }
+    var usesActualSize = false { didSet { pan = .zero; needsDisplay = true } }
     var imageRect: CGRect {
         guard let size = document?.pixelSize, size.width > 0, size.height > 0 else { return .zero }
-        let scale = min(max(1, bounds.width - 88) / size.width, max(1, bounds.height - 88) / size.height, 1) * zoom
+        let scale = usesActualSize ? 1 / (window?.backingScaleFactor ?? 1) : min(max(1, bounds.width - 64) / size.width, max(1, bounds.height - 64) / size.height, 1) * zoom
         return CGRect(x: (bounds.width - size.width * scale) / 2 + pan.x, y: (bounds.height - size.height * scale) / 2 + pan.y, width: size.width * scale, height: size.height * scale)
     }
     var imageScale: CGFloat { guard let document else { return 1 }; return imageRect.width / document.pixelSize.width }
@@ -51,15 +52,11 @@ final class CanvasView: FlippedView {
     // Canvas drags belong to annotation tools, never to AppKit window dragging.
     override var mouseDownCanMoveWindow: Bool { false }
 
+    override func viewDidChangeEffectiveAppearance() { super.viewDidChangeEffectiveAppearance(); needsDisplay = true }
+
     override func draw(_ dirtyRect: NSRect) {
         Theme.canvas.setFill()
         bounds.fill()
-        NSColor(hex: 0xD7D9D5).withAlphaComponent(0.7).setFill()
-        for x in stride(from: CGFloat(14), to: bounds.width, by: 18) {
-            for y in stride(from: CGFloat(14), to: bounds.height, by: 18) {
-                NSBezierPath(ovalIn: CGRect(x: x, y: y, width: 1.4, height: 1.4)).fill()
-            }
-        }
         guard let document else { return }
         let rect = imageRect
         NSGraphicsContext.saveGraphicsState()
@@ -155,6 +152,22 @@ final class CanvasView: FlippedView {
         if event.keyCode == 51 || event.keyCode == 117 { deleteSelected(); return }
         if event.keyCode == 53 { draft = nil; selectedID = nil; movedAnnotation = nil; originalAnnotation = nil; needsDisplay = true; return }
         if !event.modifierFlags.intersection([.command, .control, .option]).isEmpty { super.keyDown(with: event); return }
+        if (123...126).contains(event.keyCode), selectedID != nil {
+            let distance: CGFloat = event.modifierFlags.contains(.shift) ? 10 : 1
+            let delta: CGPoint
+            switch event.keyCode {
+            case 123: delta = CGPoint(x: -distance, y: 0)
+            case 124: delta = CGPoint(x: distance, y: 0)
+            case 125: delta = CGPoint(x: 0, y: distance)
+            default: delta = CGPoint(x: 0, y: -distance)
+            }
+            moveSelection(by: delta)
+            return
+        }
+        if event.keyCode == 36, let note = document?.annotations.first(where: { $0.id == selectedID }), note.kind == .note, let point = note.points.first {
+            onNote?(point, note)
+            return
+        }
         switch event.charactersIgnoringModifiers?.lowercased() {
         case "v": onTool?(.select)
         case "p": onTool?(.pen)
@@ -162,6 +175,18 @@ final class CanvasView: FlippedView {
         case "t": onTool?(.note)
         default: super.keyDown(with: event)
         }
+    }
+
+    func moveSelection(by delta: CGPoint) {
+        guard let document, let selectedID, var annotation = document.annotations.first(where: { $0.id == selectedID }) else { return }
+        let rect = AnnotationRenderer.boundingRect(annotation, imageSize: document.pixelSize)
+        let dx = max(-rect.minX, min(delta.x, document.pixelSize.width - rect.maxX))
+        let dy = max(-rect.minY, min(delta.y, document.pixelSize.height - rect.maxY))
+        guard dx != 0 || dy != 0 else { return }
+        annotation.points = annotation.points.map { CGPoint(x: $0.x + dx, y: $0.y + dy) }
+        document.replaceAnnotations(document.annotations.map { $0.id == selectedID ? annotation : $0 })
+        onChange?()
+        needsDisplay = true
     }
 
     func deleteSelected() {

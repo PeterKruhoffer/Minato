@@ -3,7 +3,8 @@ import UniformTypeIdentifiers
 
 @MainActor
 final class EditorController: NSWindowController, NSWindowDelegate {
-    private(set) var workspace: WorkspaceView!
+    private(set) var workspace: WorkspaceController!
+    private var editorToolbar: EditorToolbar!
     private(set) var documents: [CaptureDocument] = []
     private var store: CaptureStore?
     private let sample = SampleImage.make()
@@ -12,27 +13,31 @@ final class EditorController: NSWindowController, NSWindowDelegate {
     var showSettings: (() -> Void)?
     var currentDocument: CaptureDocument? { workspace.canvas.document }
 
-    init() {
-        let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 1320, height: 850), styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView], backing: .buffered, defer: false)
+    init(captureStore: CaptureStore? = nil, restoresWindow: Bool = true) {
+        let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 1320, height: 850), styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
         super.init(window: window)
         window.title = "Minato"
-        window.titleVisibility = .hidden
-        window.titlebarAppearsTransparent = true
+        window.toolbarStyle = .unified
         window.isMovableByWindowBackground = false
-        window.minSize = CGSize(width: 1080, height: 700)
+        window.minSize = CGSize(width: 820, height: 560)
         window.backgroundColor = Theme.background
-        window.appearance = NSAppearance(named: .aqua)
         window.isReleasedWhenClosed = false
-        window.setFrameAutosaveName("MinatoEditor")
-        window.center()
         window.delegate = self
-        workspace = WorkspaceView(controller: self)
-        window.contentView = workspace
+        workspace = WorkspaceController(controller: self)
+        window.contentViewController = workspace
+        editorToolbar = EditorToolbar(editor: self)
+        window.toolbar = editorToolbar.toolbar
+        window.setContentSize(CGSize(width: 1320, height: 780))
+        window.center()
+        if restoresWindow {
+            window.setFrameAutosaveName("MinatoNativeEditor")
+            window.setFrameUsingName("MinatoNativeEditor")
+        }
         workspace.canvas.onChange = { [weak self] in self?.didChange() }
         workspace.canvas.onSelection = { [weak self] in self?.refreshInspector() }
         workspace.canvas.onNote = { [weak self] point, annotation in self?.editNote(at: point, annotation: annotation) }
         workspace.canvas.onTool = { [weak self] in self?.selectTool($0) }
-        do { store = try CaptureStore(); documents = try store!.load() }
+        do { store = try captureStore ?? CaptureStore(); documents = try store!.load() }
         catch { DispatchQueue.main.async { [weak self] in self?.showError(error) } }
         selectDocument(documents.first ?? sample)
         selectTool(.arrow)
@@ -56,7 +61,7 @@ final class EditorController: NSWindowController, NSWindowDelegate {
                 if let image {
                     let name = "Capture " + Date().formatted(.dateTime.hour().minute())
                     self.addImage(image, title: name)
-                } else { self.workspace.statusLabel.stringValue = "Capture canceled. Ready when you are." }
+                } else { self.workspace.statusLabel.stringValue = "Capture canceled" }
             case .failure(let error): self.show(); self.showError(error)
             }
         }
@@ -66,7 +71,7 @@ final class EditorController: NSWindowController, NSWindowDelegate {
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [.png, .jpeg, .tiff, .heic, .webP, .bmp, .gif]
         panel.allowsMultipleSelection = false
-        panel.prompt = "Open image"
+        panel.prompt = "Open"
         panel.beginSheetModal(for: window!) { [weak self] response in
             guard response == .OK, let url = panel.url else { return }
             self?.openImage(at: url)
@@ -95,72 +100,48 @@ final class EditorController: NSWindowController, NSWindowDelegate {
 
     func showSample() { selectDocument(sample) }
 
-    func selectDocument(_ document: CaptureDocument) {
+    func selectDocument(_ document: CaptureDocument, focusCanvas: Bool = true) {
         notePopover?.close()
         workspace.canvas.document = document
         workspace.canvas.zoom = 1
-        workspace.titleLabel.stringValue = document.metadata.title
-        workspace.subtitleLabel.stringValue = "\(document.isSample ? "SAMPLE CAPTURE" : document.metadata.createdAt.formatted(date: .abbreviated, time: .shortened))   ·   \(Int(document.pixelSize.width)) × \(Int(document.pixelSize.height)) px"
-        workspace.statusLabel.stringValue = document.isSample ? "A practice canvas. Make yourself at home." : "Saved on this Mac"
-        workspace.fitButton.active = true; workspace.actualButton.active = false
+        workspace.canvas.usesActualSize = false
+        window?.title = document.isSample ? "Sample Capture" : document.metadata.title
+        window?.subtitle = "\(document.isSample ? "Sample" : document.metadata.createdAt.formatted(date: .abbreviated, time: .shortened))   ·   \(Int(document.pixelSize.width)) × \(Int(document.pixelSize.height)) px"
+        workspace.statusLabel.stringValue = document.isSample ? "Sample · Copy or export to keep your edits" : "Saved on this Mac"
+        workspace.zoomControl.selectedSegment = 0
         refreshLibrary()
         refreshInspector()
         workspace.canvas.needsDisplay = true
-        window?.makeFirstResponder(workspace.canvas)
+        if focusCanvas { window?.makeFirstResponder(workspace.canvas) }
     }
 
     private func refreshLibrary() {
-        workspace.captureList.subviews.forEach { $0.removeFromSuperview() }
-        let list = documents.isEmpty ? [sample] : documents
-        for (index, capture) in list.enumerated() {
-            let row = CaptureRow(document: capture, selected: capture.metadata.id == currentDocument?.metadata.id)
-            row.frame = CGRect(x: 0, y: index * 70, width: 184, height: 64)
-            row.onChoose = { [weak self, weak capture] in if let capture { self?.selectDocument(capture) } }
-            workspace.captureList.addSubview(row)
-        }
-        workspace.captureList.frame.size = CGSize(width: 184, height: CGFloat(list.count * 70))
+        workspace.updateLibrary(documents.isEmpty ? [sample] : documents, selectedID: currentDocument?.metadata.id)
     }
 
     func refreshInspector() {
         guard let document = currentDocument else { return }
-        workspace.undoButton.isEnabled = document.canUndo
-        workspace.redoButton.isEnabled = document.canRedo
+        editorToolbar?.update()
         workspace.deleteButton.isEnabled = workspace.canvas.selectedID != nil
-        workspace.annotationLabel.stringValue = "ANNOTATIONS   \(document.annotations.count)"
-        workspace.annotationList.subviews.forEach { $0.removeFromSuperview() }
-        if document.annotations.isEmpty {
-            let label = Theme.text("Your ideas go here.\nChoose a tool to get started.", size: 11, color: Theme.secondary)
-            label.maximumNumberOfLines = 2
-            label.frame = CGRect(x: 12, y: 8, width: 164, height: 44)
-            workspace.annotationList.addSubview(label)
-        }
-        for (index, annotation) in document.annotations.enumerated() {
-            let row = AnnotationRow(annotation: annotation, index: index, selected: annotation.id == workspace.canvas.selectedID)
-            row.frame = CGRect(x: 0, y: index * 56, width: 184, height: 52)
-            row.onChoose = { [weak self] in
-                guard let self else { return }
-                self.selectTool(.select)
-                self.workspace.canvas.selectedID = annotation.id
-                if annotation.kind == .note { self.editNote(at: annotation.points[0], annotation: annotation) }
-            }
-            workspace.annotationList.addSubview(row)
-        }
-        workspace.annotationList.frame.size = CGSize(width: 186, height: CGFloat(max(1, document.annotations.count) * 56))
+        workspace.updateAnnotations(document.annotations, selectedID: workspace.canvas.selectedID)
         let selected = document.annotations.first { $0.id == workspace.canvas.selectedID }
         let ink = selected?.color ?? workspace.canvas.activeInk
         workspace.colorLabel.stringValue = workspace.canvas.tool == .arrow && selected == nil ? "Next arrow color" : "Color"
         let width = selected?.lineWidth ?? workspace.canvas.strokeWidth
         for button in workspace.colorButtons { button.selected = button.ink == ink }
-        for (index, button) in workspace.weightButtons.enumerated() { button.active = CGFloat([2, 4, 8][index]) == width }
+        workspace.widthControl.selectedSegment = [CGFloat(2), 4, 8].firstIndex(of: width) ?? -1
+        workspace.widthControl.isEnabled = selected?.kind != .note && (selected != nil || workspace.canvas.tool != .note)
+        workspace.editNoteButton.isEnabled = selected?.kind == .note
+        workspace.canvas.setAccessibilityValue("\(document.annotations.count) annotations; \(workspace.canvas.tool.title) tool")
     }
 
-    func selectTool(_ tool: EditorTool) {
+    func selectTool(_ tool: EditorTool, focusCanvas: Bool = true) {
         workspace.canvas.tool = tool
         if tool != .select { workspace.canvas.selectedID = nil }
-        workspace.toolButtons.forEach { $0.value.active = $0.key == tool }
         workspace.hintLabel.stringValue = tool.hint
+        workspace.hintLabel.toolTip = tool.hint
         refreshInspector()
-        window?.makeFirstResponder(workspace.canvas)
+        if focusCanvas { window?.makeFirstResponder(workspace.canvas) }
     }
 
     func chooseColor(_ color: InkColor) {
@@ -187,9 +168,8 @@ final class EditorController: NSWindowController, NSWindowDelegate {
 
     func setZoom(actual: Bool) {
         workspace.canvas.zoom = 1
-        if actual { workspace.canvas.zoom = 1 / workspace.canvas.imageScale / (window?.backingScaleFactor ?? 1) }
-        workspace.fitButton.active = !actual
-        workspace.actualButton.active = actual
+        workspace.canvas.usesActualSize = actual
+        workspace.zoomControl.selectedSegment = actual ? 1 : 0
         workspace.canvas.needsDisplay = true
     }
 
@@ -217,7 +197,7 @@ final class EditorController: NSWindowController, NSWindowDelegate {
             pasteboard.clearContents()
             pasteboard.setData(png, forType: .png)
             if let tiff = bitmap.tiffRepresentation { pasteboard.setData(tiff, forType: .tiff) }
-            workspace.statusLabel.stringValue = "Copied! Ready to paste anywhere."
+            workspace.statusLabel.stringValue = "Image copied to clipboard"
         } catch { showError(error) }
     }
 
@@ -254,6 +234,21 @@ final class EditorController: NSWindowController, NSWindowDelegate {
                 self.selectDocument(self.documents.first ?? self.sample)
             } catch { self.showError(error) }
         }
+    }
+
+    func selectAnnotation(_ id: UUID) {
+        selectTool(.select, focusCanvas: false)
+        workspace.canvas.selectedID = id
+    }
+
+    func editSelectedNote() {
+        guard let note = currentDocument?.annotations.first(where: { $0.id == workspace.canvas.selectedID }), note.kind == .note, let point = note.points.first else { return }
+        editNote(at: point, annotation: note)
+    }
+
+    func addNoteAtCenter() {
+        guard let size = currentDocument?.pixelSize else { return }
+        editNote(at: CGPoint(x: size.width / 2, y: size.height / 2), annotation: nil)
     }
 
     private func editNote(at point: CGPoint, annotation: Annotation?) {
@@ -303,7 +298,7 @@ private final class NoteEditor: NSViewController, NSTextViewDelegate {
     required init?(coder: NSCoder) { fatalError() }
     override func loadView() {
         view = FlippedView(frame: CGRect(x: 0, y: 0, width: 300, height: 222))
-        let label = Theme.text(initialText.isEmpty ? "Add a little context" : "Edit your note", size: 14, weight: .semibold)
+        let label = Theme.text(initialText.isEmpty ? "Add Note" : "Edit Note", size: 14, weight: .semibold)
         label.frame = CGRect(x: 18, y: 17, width: 264, height: 24)
         view.addSubview(label)
         let scroll = NSScrollView(frame: CGRect(x: 18, y: 53, width: 264, height: 108))
@@ -328,10 +323,13 @@ private final class NoteEditor: NSViewController, NSTextViewDelegate {
         view.addSubview(scroll)
         let cancel = ActionButton("Cancel") { [weak self] in self?.onCancel?() }
         cancel.frame = CGRect(x: 18, y: 177, width: 85, height: 30)
+        cancel.keyEquivalent = "\u{1b}"
         view.addSubview(cancel)
-        saveButton = ActionButton("Save note", primary: true) { [weak self] in guard let self else { return }; self.onSave?(self.textView.string) }
+        saveButton = ActionButton("Save Note", primary: true) { [weak self] in guard let self else { return }; self.onSave?(self.textView.string) }
         saveButton.frame = CGRect(x: 178, y: 177, width: 104, height: 30)
-        saveButton.toolTip = "Save note (⌘Return)"
+        saveButton.toolTip = "Save Note (⌘Return)"
+        saveButton.keyEquivalent = "\r"
+        saveButton.keyEquivalentModifierMask = .command
         saveButton.isEnabled = !initialText.isEmpty
         view.addSubview(saveButton)
     }

@@ -96,7 +96,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             if action == "undo:" || action == "redo:" { entry.target = self }
             edit.addItem(entry)
         }
+        edit.addItem(NSMenuItem(title: "Delete", action: #selector(delete(_:)), keyEquivalent: ""))
         let editItem = NSMenuItem(); editItem.submenu = edit; menu.addItem(editItem)
+        let view = NSMenu(title: "View")
+        view.addItem(item("Hide Sidebar", #selector(toggleSidebar), "s", modifiers: [.command, .control]))
+        view.addItem(item("Hide Inspector", #selector(toggleInspector), "i", modifiers: [.command, .option]))
+        view.addItem(.separator())
+        view.addItem(item("Fit Image", #selector(fitImage), "0"))
+        view.addItem(item("Actual Size", #selector(actualSize), "1"))
+        view.addItem(.separator())
+        view.addItem(item("Focus Canvas", #selector(focusCanvas), "1", modifiers: [.command, .option]))
+        view.addItem(item("Focus Captures", #selector(focusCaptures), "2", modifiers: [.command, .option]))
+        view.addItem(item("Focus Annotations", #selector(focusAnnotations), "3", modifiers: [.command, .option]))
+        view.addItem(.separator())
+        view.addItem(NSMenuItem(title: "Show Toolbar", action: #selector(NSWindow.toggleToolbarShown(_:)), keyEquivalent: ""))
+        view.addItem(NSMenuItem(title: "Customize Toolbar…", action: #selector(NSWindow.runToolbarCustomizationPalette(_:)), keyEquivalent: ""))
+        let viewItem = NSMenuItem(); viewItem.submenu = view; menu.addItem(viewItem)
+        let tools = NSMenu(title: "Tools")
+        for (index, tool) in EditorTool.allCases.enumerated() {
+            let entry = item(tool.title, #selector(chooseTool), "")
+            entry.tag = index
+            entry.image = NSImage(systemSymbolName: tool.symbol, accessibilityDescription: nil)
+            tools.addItem(entry)
+        }
+        tools.addItem(.separator())
+        tools.addItem(item("Add Note at Center…", #selector(addNote), "n", modifiers: [.command, .option]))
+        tools.addItem(item("Edit Selected Note…", #selector(editNote), ""))
+        let toolsItem = NSMenuItem(); toolsItem.submenu = tools; menu.addItem(toolsItem)
         let window = NSMenu(title: "Window")
         let minimize = NSMenuItem(title: "Minimize", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
         window.addItem(minimize)
@@ -107,12 +133,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
     }
 
     private func updateShortcutLabel() {
-        editor.workspace.settingsButton.title = shortcuts.shortcut.display
+        editor.workspace.settingsButton.title = "Shortcut: " + shortcuts.shortcut.display + "…"
         editor.workspace.settingsButton.setAccessibilityLabel("Capture shortcut \(shortcuts.shortcut.display). Open settings.")
         editor.workspace.settingsButton.toolTip = "Global capture shortcut · Click to change"
         editor.workspace.settingsButton.needsDisplay = true
         shortcutRecorder?.title = shortcuts.shortcut.display + "  ·  Click to change"
     }
+
+    @objc func toggleSidebar(_ sender: Any?) { editor.workspace.toggleSidebar(sender) }
+    @objc func toggleInspector(_ sender: Any?) { editor.workspace.toggleInspector(sender) }
+    @objc func fitImage(_ sender: Any?) { editor.setZoom(actual: false) }
+    @objc func actualSize(_ sender: Any?) { editor.setZoom(actual: true) }
+    @objc func focusCanvas(_ sender: Any?) { editor.window?.makeFirstResponder(editor.workspace.canvas) }
+    @objc func focusCaptures(_ sender: Any?) {
+        editor.workspace.sidebarItem.isCollapsed = false
+        editor.window?.makeFirstResponder(editor.workspace.captureTable)
+    }
+    @objc func focusAnnotations(_ sender: Any?) {
+        editor.workspace.inspectorItem.isCollapsed = false
+        editor.window?.makeFirstResponder(editor.workspace.annotationTable)
+    }
+    @objc func chooseTool(_ sender: NSMenuItem) { editor.selectTool(EditorTool.allCases[sender.tag]) }
+    @objc func addNote(_ sender: Any?) { editor.addNoteAtCenter() }
+    @objc func editNote(_ sender: Any?) { editor.editSelectedNote() }
+    @objc func delete(_ sender: Any?) { editor.deleteAnnotation() }
 
     @objc func newCapture(_ sender: Any?) { editor.capture() }
     @objc func showEditor(_ sender: Any?) { editor.show() }
@@ -139,6 +183,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             if let text = NSApp.keyWindow?.firstResponder as? NSTextView { return text.undoManager?.canRedo == true }
             return editor?.currentDocument?.canRedo == true
         }
+        if menuItem.action == #selector(toggleSidebar(_:)) {
+            menuItem.title = editor?.workspace.sidebarItem.isCollapsed == true ? "Show Sidebar" : "Hide Sidebar"
+        }
+        if menuItem.action == #selector(toggleInspector(_:)) {
+            menuItem.title = editor?.workspace.inspectorItem.isCollapsed == true ? "Show Inspector" : "Hide Inspector"
+        }
+        if menuItem.action == #selector(chooseTool(_:)) {
+            menuItem.state = editor?.workspace.canvas.tool == EditorTool.allCases[menuItem.tag] ? .on : .off
+        }
+        if menuItem.action == #selector(editNote(_:)) {
+            return editor?.currentDocument?.annotations.contains { $0.id == editor?.workspace.canvas.selectedID && $0.kind == .note } == true
+        }
+        if menuItem.action == #selector(delete(_:)) { return editor?.workspace.canvas.selectedID != nil }
         if menuItem.action == #selector(deleteCapture(_:)) { return editor?.currentDocument?.isSample == false }
         return true
     }
@@ -153,16 +210,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             let window = NSWindow(contentRect: CGRect(x: 0, y: 0, width: 480, height: 365), styleMask: [.titled, .closable], backing: .buffered, defer: false)
             window.title = "Minato Settings"
             window.isReleasedWhenClosed = false
-            window.appearance = NSAppearance(named: .aqua)
             let view = Surface(Theme.background)
-            let heading = Theme.text("Ready when inspiration strikes.", size: 20, weight: .semibold)
+            let heading = Theme.text("Screen Capture", size: 17, weight: .semibold)
             heading.frame = CGRect(x: 28, y: 28, width: 430, height: 30)
             view.addSubview(heading)
             let description = Theme.text("Use your capture shortcut from any app.\nMinato stays in the menu bar when its window is closed.", size: 12, color: Theme.secondary)
             description.maximumNumberOfLines = 2
             description.frame = CGRect(x: 28, y: 72, width: 425, height: 42)
             view.addSubview(description)
-            let label = Theme.text("GLOBAL CAPTURE SHORTCUT", size: 10, weight: .semibold, color: Theme.secondary)
+            let label = Theme.text("Keyboard Shortcut", size: 13, weight: .semibold, color: Theme.secondary)
             label.frame = CGRect(x: 28, y: 139, width: 410, height: 20)
             view.addSubview(label)
             let recorder = ShortcutRecorder(frame: CGRect(x: 28, y: 170, width: 424, height: 40))
@@ -183,7 +239,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             }
             reset.frame = CGRect(x: 28, y: 218, width: 424, height: 32)
             view.addSubview(reset)
-            let permissions = ActionButton("Screen recording permissions", symbol: "lock.shield") {
+            let permissions = ActionButton("Screen Recording Settings…", symbol: "lock.shield") {
                 NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture")!)
             }
             permissions.frame = CGRect(x: 28, y: 290, width: 424, height: 35)
